@@ -9,9 +9,9 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func NewTable(items []TableItem) *widget.Table {
+func NewTable(items []TableItem, rowCount func() int) *widget.Table {
 	table := widget.NewTableWithHeaders(func() (rows int, cols int) {
-		return 0, len(items)
+		return rowCount(), len(items)
 	}, func() fyne.CanvasObject {
 		return container.NewHBox(
 			widget.NewLabel("Will be replaced"),
