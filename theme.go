@@ -18,10 +18,6 @@ var (
 	}
 )
 
-func GetFont() []byte {
-	return miSans
-}
-
 const (
 	defaultFactor = 1
 )
