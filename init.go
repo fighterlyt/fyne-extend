@@ -33,4 +33,8 @@ func init() {
 	}
 
 	_ = os.Setenv("FYNE_FONT", finalFontPath) // 设置环境变量
+
+	if err := ensureConfig(); err != nil {
+		panic(`确认存储` + err.Error())
+	}
 }
