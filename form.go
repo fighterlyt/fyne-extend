@@ -123,4 +123,6 @@ func (f *Form) SetString(key, value string) {
 	}
 
 	_ = item.data.Set(value) // 注意:binding.String 是没有错误
+
+	item.Widget.Refresh()
 }
