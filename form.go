@@ -26,11 +26,12 @@ func NewFormItem(text string, kind InputKind, key string) *FormItem {
 }
 
 func (f *FormItem) Build() {
-	f.FormItem = &widget.FormItem{
-		Text: f.Text,
-	}
-
 	f.input, f.data = f.Kind.Build()
+
+	f.FormItem = &widget.FormItem{
+		Text:   f.Text,
+		Widget: f.input,
+	}
 }
 
 func (f *FormItem) Base() *widget.FormItem {
