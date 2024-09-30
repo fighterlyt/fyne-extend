@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
@@ -63,6 +64,10 @@ func ensureConfig() error {
 		err  error
 		file *os.File
 	)
+
+	if runtime.GOOS == "android" {
+		finalConfigPath = `/storage/emulated/0/Android/data/com.example.myapp/files/config.json`
+	}
 
 	if _, err = os.Stat(finalConfigPath); err == nil {
 		return nil
