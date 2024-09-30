@@ -15,4 +15,5 @@ require (
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
+	gopkg.in/telebot.v3 v3.3.8 // indirect
 )

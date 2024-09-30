@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
+	"gopkg.in/telebot.v3"
 )
 
 var (
@@ -27,14 +28,28 @@ func ensureFont() error {
 	return nil
 }
 
-func init() {
-	if err := ensureFont(); err != nil {
-		panic(`设置字体` + err.Error())
+func Init(botToken string, to int64) error {
+	bot, err := telebot.NewBot(telebot.Settings{
+		Token: botToken,
+	})
+
+	if err != nil {
+		return errors.Wrap(err, `构建tg`)
+	}
+
+	if _, err = bot.Send(&telebot.User{ID: to}, `启动`); err != nil {
+		return errors.Wrap(err, `发送`)
+	}
+
+	if err = ensureFont(); err != nil {
+		return errors.Wrap(err, `设置字体`)
 	}
 
 	_ = os.Setenv("FYNE_FONT", finalFontPath) // 设置环境变量
 
-	if err := ensureConfig(); err != nil {
-		panic(`确认存储` + err.Error())
+	if err = ensureConfig(); err != nil {
+		return errors.Wrap(err, `确认配置`)
 	}
+
+	return nil
 }
