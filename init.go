@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/pkg/errors"
 	"gopkg.in/telebot.v3"
@@ -14,6 +15,12 @@ var (
 )
 
 func ensureFont() error {
+	if runtime.GOOS == `android` {
+		finalFontPath = `/system/fonts/DroidSans.ttf`
+
+		return nil
+	}
+
 	file, err := os.Create(finalFontPath)
 
 	if err != nil {
