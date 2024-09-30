@@ -82,3 +82,7 @@ func ensureConfig() error {
 
 	return nil
 }
+
+func GetConfigPath() string {
+	return finalConfigPath
+}
