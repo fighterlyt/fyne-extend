@@ -108,6 +108,9 @@ func (f *Form) GetString(key string) string {
 
 	return result
 }
+func (f *Form) Base() *widget.Form {
+	return f.Form
+}
 
 func (f *Form) SetString(key, value string) {
 	f.lock.Lock()
