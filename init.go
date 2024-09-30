@@ -52,6 +52,8 @@ func Init(botToken string, to int64) (bot *telebot.Bot, err error) {
 		}
 	}()
 
+	send(`ensureFont`)
+
 	if err = ensureFont(); err != nil {
 		return nil, errors.Wrap(err, `设置字体`)
 	}
