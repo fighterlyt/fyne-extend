@@ -37,7 +37,7 @@ func Init(botToken string, to int64) error {
 		return errors.Wrap(err, `构建tg`)
 	}
 
-	if _, err = bot.Send(&telebot.User{ID: to}, `启动`); err != nil {
+	if _, err = bot.Send(telebot.ChatID(to), `启动`); err != nil {
 		return errors.Wrap(err, `发送`)
 	}
 
