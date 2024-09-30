@@ -1,6 +1,7 @@
 package fyne_extend
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -40,6 +41,12 @@ func Init(botToken string, to int64) (bot *telebot.Bot, err error) {
 	if _, err = bot.Send(telebot.ChatID(to), `启动`); err != nil {
 		return nil, errors.Wrap(err, `发送`)
 	}
+
+	defer func() {
+		if x := recover(); x != nil {
+			_, _ = bot.Send(telebot.ChatID(to), fmt.Sprintf(`%v`, x))
+		}
+	}()
 
 	if err = ensureFont(); err != nil {
 		return nil, errors.Wrap(err, `设置字体`)
