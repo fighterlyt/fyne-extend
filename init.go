@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/ncruces/go-sqlite3/gormlite"
 	"github.com/pkg/errors"
 	"gopkg.in/telebot.v3"
+	"gorm.io/gorm"
 )
 
 var (
@@ -36,13 +38,13 @@ func ensureFont() error {
 	return nil
 }
 
-func Init(botToken string, to int64, needSend bool) (bot *telebot.Bot, err error) {
+func Init(botToken string, to int64, needSend bool, dbName string) (bot *telebot.Bot, db *gorm.DB, err error) {
 	bot, err = telebot.NewBot(telebot.Settings{
 		Token: botToken,
 	})
 
 	if err != nil {
-		return nil, errors.Wrap(err, `构建tg`)
+		return nil, nil, errors.Wrap(err, `构建tg`)
 	}
 
 	send := func(data string, needSend bool) {
@@ -52,7 +54,7 @@ func Init(botToken string, to int64, needSend bool) (bot *telebot.Bot, err error
 	}
 
 	if _, err = bot.Send(telebot.ChatID(to), `启动`); err != nil {
-		return nil, errors.Wrap(err, `发送`)
+		return nil, nil, errors.Wrap(err, `发送`)
 	}
 
 	defer func() {
@@ -64,7 +66,7 @@ func Init(botToken string, to int64, needSend bool) (bot *telebot.Bot, err error
 	send(`ensureFont`, needSend)
 
 	if err = ensureFont(); err != nil {
-		return bot, errors.Wrap(err, `设置字体`)
+		return bot, nil, errors.Wrap(err, `设置字体`)
 	}
 
 	send(`ensureFont`, needSend)
@@ -72,10 +74,22 @@ func Init(botToken string, to int64, needSend bool) (bot *telebot.Bot, err error
 	_ = os.Setenv("FYNE_FONT", finalFontPath) // 设置环境变量
 
 	if err = ensureConfig(); err != nil {
-		return bot, errors.Wrap(err, `确认配置`)
+		return bot, nil, errors.Wrap(err, `确认配置`)
 	}
 
 	send(`ensureConfig`, needSend)
 
-	return bot, nil
+	if dbName != `` {
+		if db, err = initDB(dbName); err != nil {
+			return bot, nil, errors.Wrap(err, `init DB`)
+		}
+	}
+
+	return bot, db, nil
+}
+
+func initDB(name string) (db *gorm.DB, err error) {
+	db, err = gorm.Open(gormlite.Open(filepath.Join(GetBasePath(), name+`.db`)), &gorm.Config{})
+
+	return db, err
 }
