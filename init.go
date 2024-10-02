@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	finalFontPath = filepath.Join(os.Getenv(`HOME`), `.fyneFont.ttf`)
+	finalFontPath = filepath.Join(GetBasePath(), `.fyneFont.ttf`)
 )
 
 func ensureFont() error {

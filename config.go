@@ -17,8 +17,16 @@ type Config struct {
 
 var (
 	configPath      = `config.json`
-	finalConfigPath = filepath.Join(os.Getenv(`HOME`), configPath)
+	finalConfigPath = filepath.Join(GetBasePath(), configPath)
 )
+
+func GetBasePath() string {
+	if runtime.GOOS == "android" {
+		return `/storage/emulated/0/Android/data/com.example.myapp/files`
+	}
+
+	return os.Getenv(`HOME`)
+}
 
 func SaveConfig(ctx context.Context, build func(ctx2 context.Context) (conf any, err error), win fyne.Window) {
 	var (
@@ -64,10 +72,6 @@ func ensureConfig() error {
 		err  error
 		file *os.File
 	)
-
-	if runtime.GOOS == "android" {
-		finalConfigPath = `/storage/emulated/0/Android/data/com.example.myapp/files/config.json`
-	}
 
 	if _, err = os.Stat(finalConfigPath); err == nil {
 		return nil
