@@ -36,7 +36,7 @@ func ensureFont() error {
 	return nil
 }
 
-func Init(botToken string, to int64) (bot *telebot.Bot, err error) {
+func Init(botToken string, to int64, needSend bool) (bot *telebot.Bot, err error) {
 	bot, err = telebot.NewBot(telebot.Settings{
 		Token: botToken,
 	})
@@ -45,8 +45,10 @@ func Init(botToken string, to int64) (bot *telebot.Bot, err error) {
 		return nil, errors.Wrap(err, `构建tg`)
 	}
 
-	send := func(data string) {
-		_, _ = bot.Send(telebot.ChatID(to), data)
+	send := func(data string, needSend bool) {
+		if needSend {
+			_, _ = bot.Send(telebot.ChatID(to), data)
+		}
 	}
 
 	if _, err = bot.Send(telebot.ChatID(to), `启动`); err != nil {
@@ -59,13 +61,13 @@ func Init(botToken string, to int64) (bot *telebot.Bot, err error) {
 		}
 	}()
 
-	send(`ensureFont`)
+	send(`ensureFont`, needSend)
 
 	if err = ensureFont(); err != nil {
 		return bot, errors.Wrap(err, `设置字体`)
 	}
 
-	send(`ensureFont`)
+	send(`ensureFont`, needSend)
 
 	_ = os.Setenv("FYNE_FONT", finalFontPath) // 设置环境变量
 
@@ -73,7 +75,7 @@ func Init(botToken string, to int64) (bot *telebot.Bot, err error) {
 		return bot, errors.Wrap(err, `确认配置`)
 	}
 
-	send(`ensureConfig`)
+	send(`ensureConfig`, needSend)
 
 	return bot, nil
 }
